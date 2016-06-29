@@ -25,7 +25,7 @@
 #define CHK(x,y) (x & (1<<y))               // |
 #define TOG(x,y) (x^=(1<<y))                //-+
 
-#define N 160  //How many frequencies
+#define N 200  //How many frequencies
 const float maxDist = 163840; // 160 * 1024
 
 float results[N];                 //-Filtered result buffer
