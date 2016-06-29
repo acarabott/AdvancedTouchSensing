@@ -114,26 +114,46 @@ void loop()
     }
   }
 
+
   switch (currentGesture) {
     case RESTING:
       noTone(TONE_PIN);
       break;
     case FOOD:
-      tone(TONE_PIN, 880, 100);
+      {
+        const uint8_t beats = 24;
+        const uint8_t beatDur = 62; // 1000 / 16, semiquavers
+        const uint16_t totalDur = beats * beatDur;
+        const uint8_t currentBeat = (millis() % totalDur) / beatDur;
+
+        if(currentBeat == 0 || currentBeat == 4){
+          tone(TONE_PIN, 2637, 100);
+        } else if(currentBeat == 1 || currentBeat == 5){
+          tone(TONE_PIN, 2794, 100);
+        } else {
+          noTone(TONE_PIN);
+        }
+
+      }
       break;
     case GRAB:
-      if(millis() % 20 < 10){
-        tone(TONE_PIN, 2000, 100);
-      } else {
-        tone(TONE_PIN, 2020, 100);
+      {
+        const uint8_t beats = 6;
+        const uint8_t beatDur = 130; // 1000 / 6
+        const uint16_t totalDur = beats * beatDur;
+        const uint8_t currentBeat = (millis() % totalDur) / beatDur;
+
+        if(currentBeat % 2 == 0) {
+          tone(TONE_PIN, random(2000, 2500), 100);
+        } else {
+          noTone(TONE_PIN);
+        }
       }
-      Serial.println(millis());
       break;
     default:
       noTone(TONE_PIN);
       break;
   }
-
 
   TOG(PORTB, 0);            //-Toggle pin 8 after each sweep (good for scope)
 }
