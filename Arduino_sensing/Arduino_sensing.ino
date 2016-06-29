@@ -86,12 +86,8 @@ void loop()
       maxResult = results[d];
       maxFreq = d;
     }
-    // plot(v, 0);              //-Display
-    // plot(results[d], 1);
-    // delayMicroseconds(1);
-
-    // Serial.println(results[d]);
   }
+
 
   updateButtons();
   for(unsigned int i = 0; i < NUM_GESTURES; i++) {
@@ -100,8 +96,6 @@ void loop()
       gesturePoints[i][1] = maxResult;
     }
   }
-
-  // PlottArray(1, freq, results);
 
   TOG(PORTB, 0);            //-Toggle pin 8 after each sweep (good for scope)
 }
