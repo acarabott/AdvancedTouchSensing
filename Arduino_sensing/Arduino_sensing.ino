@@ -28,7 +28,6 @@
 #define N 160  //How many frequencies
 
 float results[N];                 //-Filtered result buffer
-float freq[N];                    //-Filtered result buffer
 const int sizeOfArray = N;
 
 
@@ -39,6 +38,7 @@ const int sizeOfArray = N;
 
 Button buttons[NUM_GESTURES] = { Button(10), Button(11), Button(12) };
 float gesturePoints[NUM_GESTURES][2] = {{0.0, 0.0}, {0.0, 0.0}};
+float gestureDistances[NUM_GESTURES] = { 0.0, 0.0, 0.0};
 
 void setup()
 {
@@ -73,22 +73,20 @@ void loop()
 {
   unsigned int maxFreq = 0;
   float maxResult = 0;
-  for(unsigned int d = 0; d < N; d++)
+  for(unsigned int i = 0; i < N; i++)
   {
     const int v = analogRead(0);  //-Read response signal
     CLR(TCCR1B, 0);               //-Stop generator
     TCNT1 = 0;                    //-Reload new frequency
-    ICR1 = d;                     // |
-    OCR1A = d / 2;                //-+
+    ICR1 = i;                     // |
+    OCR1A = i / 2;                //-+
     SET(TCCR1B, 0);               //-Restart generator
 
-    results[d] = results[d] * 0.5 + (float)(v) * 0.5;   //Filter results
+    results[i] = results[i] * 0.5 + (float)(v) * 0.5;   //Filter results
 
-    freq[d] = d;
-
-    if(results[d] > maxResult) {
-      maxResult = results[d];
-      maxFreq = d;
+    if(results[i] > maxResult) {
+      maxResult = results[i];
+      maxFreq = i;
     }
   }
 
