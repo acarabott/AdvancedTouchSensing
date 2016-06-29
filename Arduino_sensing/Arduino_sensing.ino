@@ -65,15 +65,14 @@ float getDistance(float x1, float y1, float x2, float y2) {
   return abs(x1 - x2) + abs(y1 - y2);
 }
 
-uint8_t getCurrentBeat(uint32_t time, uint32_t startTime, uint8_t numBeats,
-                       uint16_t beatDur) {
+uint8_t getCurrentBeat(uint32_t startTime, uint8_t numBeats, uint16_t beatDur) {
   uint16_t totalDur = numBeats * beatDur;
-  uint32_t relativeTime = time - startTime;
+  uint32_t relativeTime = millis() - startTime;
   return (relativeTime % totalDur) / beatDur;
 }
 
 void foodResponse(uint32_t startTime) {
-  const uint8_t currentBeat = getCurrentBeat(millis(), startTime, 24, 62);
+  const uint8_t currentBeat = getCurrentBeat(startTime, 24, 62);
 
   if(currentBeat == 0 || currentBeat == 4){
     tone(TONE_PIN, random(2114, 2162), 100);
@@ -85,7 +84,7 @@ void foodResponse(uint32_t startTime) {
 }
 
 void grabResponse(uint32_t startTime) {
-  const uint8_t currentBeat = getCurrentBeat(millis(), startTime, 6, 130);
+  const uint8_t currentBeat = getCurrentBeat(startTime, 6, 130);
 
   if(currentBeat % 2 == 0) {
     tone(TONE_PIN, random(2500, 3000), 100);
