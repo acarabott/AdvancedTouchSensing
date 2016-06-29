@@ -26,6 +26,7 @@
 #define TOG(x,y) (x^=(1<<y))                //-+
 
 #define N 160  //How many frequencies
+const float maxDist = 163840; // 160 * 1024
 
 float results[N];                 //-Filtered result buffer
 const int sizeOfArray = N;
@@ -38,7 +39,6 @@ const int sizeOfArray = N;
 
 Button buttons[NUM_GESTURES] = { Button(10), Button(11), Button(12) };
 float gesturePoints[NUM_GESTURES][2] = {{0.0, 0.0}, {0.0, 0.0}};
-float gestureDistances[NUM_GESTURES] = { 0.0, 0.0, 0.0};
 
 void setup()
 {
@@ -66,11 +66,12 @@ void updateButtons() {
 }
 
 float getDistance(float x1, float y1, float x2, float y2) {
-  return sq(x1 - x2) + sq(y1 - y2);
+  return abs(x1 - x2) + abs(y1 - y2);
 }
 
 void loop()
 {
+  // read data
   unsigned int maxFreq = 0;
   float maxResult = 0;
   for(unsigned int i = 0; i < N; i++)
@@ -85,17 +86,30 @@ void loop()
     results[i] = results[i] * 0.5 + (float)(v) * 0.5;   //Filter results
 
     if(results[i] > maxResult) {
-      maxResult = results[i];
       maxFreq = i;
+      maxResult = results[i];
     }
   }
 
-
+  // gesture recognition
   updateButtons();
+  unsigned int closestGestureIdx = 0;
+  float closestGestureDistance = maxDist;
+
   for(unsigned int i = 0; i < NUM_GESTURES; i++) {
-    if(buttons[i].getState() == HIGH){
+    // update gesture
+    if(buttons[i].getState() == HIGH) {
       gesturePoints[i][0] = maxFreq;
       gesturePoints[i][1] = maxResult;
+    }
+
+    // calculate closest gesture
+    const float dist = getDistance(maxFreq, maxResult,
+                                   gesturePoints[i][0], gesturePoints[i][1]);
+
+    if(dist < closestGestureDistance){
+      closestGestureDistance = dist;
+      closestGestureIdx = i;
     }
   }
 
