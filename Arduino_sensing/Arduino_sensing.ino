@@ -61,12 +61,6 @@ void setup()
   }
 }
 
-void updateButtons() {
-  for(unsigned int i = 0; i < NUM_GESTURES; i++) {
-    buttons[i].update();
-  }
-}
-
 float getDistance(float x1, float y1, float x2, float y2) {
   return abs(x1 - x2) + abs(y1 - y2);
 }
@@ -121,11 +115,10 @@ void loop()
   }
 
   // gesture recognition
-  updateButtons();
   float closestGestureDistance = maxDist;
-
   for(unsigned int i = 0; i < NUM_GESTURES; i++) {
     // update gesture
+    buttons[i].update();
     if(buttons[i].getState() == HIGH) {
       gesturePoints[i][0] = maxFreq;
       gesturePoints[i][1] = maxResult;
@@ -141,6 +134,7 @@ void loop()
     }
   }
 
+  // response
   switch (currentGesture) {
     case RESTING: noTone(TONE_PIN);   break;
     case FOOD:    foodResponse();     break;
