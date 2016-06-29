@@ -25,10 +25,10 @@
 #define CHK(x,y) (x & (1<<y))               // |
 #define TOG(x,y) (x^=(1<<y))                //-+
 
-#define N 200  //How many frequencies
-const float maxDist = 163840; // 160 * 1024
+#define N 200                       //How many frequencies
+const float maxDist = 163840;       // 160 * 1024
 
-float results[N];                 //-Filtered result buffer
+float results[N];                   //-Filtered result buffer
 
 #define RESTING 0
 #define FOOD 1
@@ -51,12 +51,10 @@ void setup()
   ICR1 = 110;
   OCR1A = 55;
 
-  pinMode(9,OUTPUT);              //-Signal generator pin
-  pinMode(8,OUTPUT);              //-Sync (test) pin
+  pinMode(9, OUTPUT);             //-Signal generator pin
+  pinMode(8, OUTPUT);             //-Sync (test) pin
 
-
-
-  Serial.begin(115200);
+  // Serial.begin(115200);
 
   for(int i = 0; i < N; i++) {    //-Preset results
     results[i] = 0;               //-+
@@ -99,16 +97,16 @@ void grabResponse(uint32_t startTime) {
 void loop()
 {
   // read data
-  unsigned int maxFreq = 0;
+  uint16_t maxFreq = 0;
   float maxResult = 0;
-  for(unsigned int i = 0; i < N; i++)
+  for(uint16_t i = 0; i < N; i++)
   {
-    const int v = analogRead(0);  //-Read response signal
-    CLR(TCCR1B, 0);               //-Stop generator
-    TCNT1 = 0;                    //-Reload new frequency
-    ICR1 = i;                     // |
-    OCR1A = i / 2;                //-+
-    SET(TCCR1B, 0);               //-Restart generator
+    const uint16_t v = analogRead(0);  //-Read response signal
+    CLR(TCCR1B, 0);                    //-Stop generator
+    TCNT1 = 0;                         //-Reload new frequency
+    ICR1 = i;                          // |
+    OCR1A = i / 2;                     //-+
+    SET(TCCR1B, 0);                    //-Restart generator
 
     results[i] = results[i] * 0.5 + (float)(v) * 0.5;   //Filter results
 
@@ -120,7 +118,7 @@ void loop()
 
   // gesture recognition
   float closestGestureDistance = maxDist;
-  for(unsigned int i = 0; i < NUM_GESTURES; i++) {
+  for(uint8_t i = 0; i < NUM_GESTURES; i++) {
     // update gesture
     buttons[i].update();
     if(buttons[i].getState() == HIGH) {
