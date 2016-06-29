@@ -38,6 +38,10 @@ float results[N];                 //-Filtered result buffer
 Button buttons[NUM_GESTURES] = { Button(10), Button(11), Button(12) };
 float gesturePoints[NUM_GESTURES][2] = {{0.0, 0.0}, {0.0, 0.0}};
 
+uint8_t currentGesture = RESTING;
+
+#define TONE_PIN 7
+
 void setup()
 {
   TCCR1A = 0b10000010;            //-Set up frequency generator
@@ -91,7 +95,6 @@ void loop()
 
   // gesture recognition
   updateButtons();
-  unsigned int closestGestureIdx = 0;
   float closestGestureDistance = maxDist;
 
   for(unsigned int i = 0; i < NUM_GESTURES; i++) {
@@ -107,9 +110,30 @@ void loop()
 
     if(dist < closestGestureDistance){
       closestGestureDistance = dist;
-      closestGestureIdx = i;
+      currentGesture = i;
     }
   }
+
+  switch (currentGesture) {
+    case RESTING:
+      noTone(TONE_PIN);
+      break;
+    case FOOD:
+      tone(TONE_PIN, 880, 100);
+      break;
+    case GRAB:
+      if(millis() % 20 < 10){
+        tone(TONE_PIN, 2000, 100);
+      } else {
+        tone(TONE_PIN, 2020, 100);
+      }
+      Serial.println(millis());
+      break;
+    default:
+      noTone(TONE_PIN);
+      break;
+  }
+
 
   TOG(PORTB, 0);            //-Toggle pin 8 after each sweep (good for scope)
 }
