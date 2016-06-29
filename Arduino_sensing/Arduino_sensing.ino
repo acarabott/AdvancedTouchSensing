@@ -74,9 +74,9 @@ void foodResponse() {
   const uint8_t currentBeat = getCurrentBeat(millis(), 24, 62);
 
   if(currentBeat == 0 || currentBeat == 4){
-    tone(TONE_PIN, 2637, 100);
+    tone(TONE_PIN, random(2114, 2162), 100);
   } else if(currentBeat == 1 || currentBeat == 5){
-    tone(TONE_PIN, 2794, 100);
+    tone(TONE_PIN, random(2269, 2319), 100);
   } else {
     noTone(TONE_PIN);
   }
@@ -86,7 +86,7 @@ void grabResponse() {
   const uint8_t currentBeat = getCurrentBeat(millis(), 6, 130);
 
   if(currentBeat % 2 == 0) {
-    tone(TONE_PIN, random(2000, 2500), 100);
+    tone(TONE_PIN, random(2500, 3000), 100);
   } else {
     noTone(TONE_PIN);
   }
