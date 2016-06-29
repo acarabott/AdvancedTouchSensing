@@ -65,6 +65,10 @@ void updateButtons() {
   }
 }
 
+float getDistance(float x1, float y1, float x2, float y2) {
+  return sq(x1 - x2) + sq(y1 - y2);
+}
+
 void loop()
 {
   unsigned int maxFreq = 0;
