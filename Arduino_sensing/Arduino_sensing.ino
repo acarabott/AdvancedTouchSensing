@@ -67,8 +67,8 @@ void updateButtons() {
 
 void loop()
 {
+  unsigned int maxFreq = 0;
   float maxResult = 0;
-  unsigned int maxIdx = 0;
   for(unsigned int d = 0; d < N; d++)
   {
     const int v = analogRead(0);  //-Read response signal
@@ -84,7 +84,7 @@ void loop()
 
     if(results[d] > maxResult) {
       maxResult = results[d];
-      maxIdx = d;
+      maxFreq = d;
     }
     // plot(v, 0);              //-Display
     // plot(results[d], 1);
@@ -96,8 +96,8 @@ void loop()
   updateButtons();
   for(unsigned int i = 0; i < NUM_GESTURES; i++) {
     if(buttons[i].getState() == HIGH){
-      gesturePoints[i][0] = freq[maxIdx];
-      gesturePoints[i][1] = results[maxIdx];
+      gesturePoints[i][0] = maxFreq;
+      gesturePoints[i][1] = maxResult;
     }
   }
 
