@@ -1,7 +1,7 @@
+#include "Button.h"
 
 
-
-   //****************************************************************************************
+//****************************************************************************************
 // Illutron take on Disney style capacitive touch sensor using only passives and Arduino
 // Dzl 2012
 //****************************************************************************************
@@ -31,6 +31,15 @@ float results[N];                 //-Filtered result buffer
 float freq[N];                    //-Filtered result buffer
 const int sizeOfArray = N;
 
+
+#define RESTING 0
+#define FOOD 1
+#define GRAB 2
+#define NUM_STATES 3
+
+Button buttons[NUM_STATES] = { Button(10), Button(11), Button(12) };
+// Button restingButton(10);
+
 void setup()
 {
   TCCR1A = 0b10000010;            //-Set up frequency generator
@@ -41,10 +50,18 @@ void setup()
   pinMode(9,OUTPUT);              //-Signal generator pin
   pinMode(8,OUTPUT);              //-Sync (test) pin
 
+
+
   Serial.begin(115200);
 
   for(int i = 0; i < N; i++) {    //-Preset results
     results[i] = 0;               //-+
+  }
+}
+
+void updateButtons() {
+  for(unsigned int i = 0; i < NUM_STATES; i++) {
+    buttons[i].update();
   }
 }
 
@@ -66,9 +83,17 @@ void loop()
     // plot(v, 0);              //-Display
     // plot(results[d], 1);
     // delayMicroseconds(1);
+
+    // Serial.println(results[d]);
   }
 
-  PlottArray(1, freq, results);
+  updateButtons();
+  Serial.println("button states:");
+  for(unsigned int i = 0; i < NUM_STATES; i++) {
+    Serial.println(buttons[i].getState());
+  }
+
+  // PlottArray(1, freq, results);
 
   TOG(PORTB, 0);            //-Toggle pin 8 after each sweep (good for scope)
 }
