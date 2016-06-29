@@ -38,7 +38,9 @@ float results[N];                 //-Filtered result buffer
 Button buttons[NUM_GESTURES] = { Button(10), Button(11), Button(12) };
 float gesturePoints[NUM_GESTURES][2] = {{0.0, 0.0}, {0.0, 0.0}};
 
+uint8_t previousGesture = RESTING;
 uint8_t currentGesture = RESTING;
+uint32_t gestureStartTime = 0;
 
 #define TONE_PIN 7
 
@@ -65,13 +67,15 @@ float getDistance(float x1, float y1, float x2, float y2) {
   return abs(x1 - x2) + abs(y1 - y2);
 }
 
-uint8_t getCurrentBeat(uint32_t time, uint8_t numBeats, uint16_t beatDur) {
+uint8_t getCurrentBeat(uint32_t time, uint32_t startTime, uint8_t numBeats,
+                       uint16_t beatDur) {
   uint16_t totalDur = numBeats * beatDur;
-  return (time % totalDur) / beatDur;
+  uint32_t relativeTime = time - startTime;
+  return (relativeTime % totalDur) / beatDur;
 }
 
-void foodResponse() {
-  const uint8_t currentBeat = getCurrentBeat(millis(), 24, 62);
+void foodResponse(uint32_t startTime) {
+  const uint8_t currentBeat = getCurrentBeat(millis(), startTime, 24, 62);
 
   if(currentBeat == 0 || currentBeat == 4){
     tone(TONE_PIN, random(2114, 2162), 100);
@@ -82,8 +86,8 @@ void foodResponse() {
   }
 }
 
-void grabResponse() {
-  const uint8_t currentBeat = getCurrentBeat(millis(), 6, 130);
+void grabResponse(uint32_t startTime) {
+  const uint8_t currentBeat = getCurrentBeat(millis(), startTime, 6, 130);
 
   if(currentBeat % 2 == 0) {
     tone(TONE_PIN, random(2500, 3000), 100);
@@ -134,13 +138,19 @@ void loop()
     }
   }
 
+  if(currentGesture != previousGesture){
+    gestureStartTime = millis();
+  }
+
   // response
   switch (currentGesture) {
     case RESTING: noTone(TONE_PIN);   break;
-    case FOOD:    foodResponse();     break;
-    case GRAB:    grabResponse();     break;
+    case FOOD:    foodResponse(gestureStartTime);     break;
+    case GRAB:    grabResponse(gestureStartTime);     break;
     default:      noTone(TONE_PIN);   break;
   }
+
+  previousGesture = currentGesture;
 
   TOG(PORTB, 0);            //-Toggle pin 8 after each sweep (good for scope)
 }
