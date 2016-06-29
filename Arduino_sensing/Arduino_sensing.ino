@@ -29,8 +29,6 @@
 const float maxDist = 163840; // 160 * 1024
 
 float results[N];                 //-Filtered result buffer
-const int sizeOfArray = N;
-
 
 #define RESTING 0
 #define FOOD 1
