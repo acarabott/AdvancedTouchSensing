@@ -71,6 +71,11 @@ float getDistance(float x1, float y1, float x2, float y2) {
   return abs(x1 - x2) + abs(y1 - y2);
 }
 
+uint8_t getCurrentBeat(uint32_t time, uint8_t numBeats, uint16_t beatDur) {
+  uint16_t totalDur = numBeats * beatDur;
+  return (time % totalDur) / beatDur;
+}
+
 void loop()
 {
   // read data
@@ -121,10 +126,7 @@ void loop()
       break;
     case FOOD:
       {
-        const uint8_t beats = 24;
-        const uint8_t beatDur = 62; // 1000 / 16, semiquavers
-        const uint16_t totalDur = beats * beatDur;
-        const uint8_t currentBeat = (millis() % totalDur) / beatDur;
+        const uint8_t currentBeat = getCurrentBeat(millis(), 24, 62);
 
         if(currentBeat == 0 || currentBeat == 4){
           tone(TONE_PIN, 2637, 100);
@@ -138,10 +140,7 @@ void loop()
       break;
     case GRAB:
       {
-        const uint8_t beats = 6;
-        const uint8_t beatDur = 130; // 1000 / 6
-        const uint16_t totalDur = beats * beatDur;
-        const uint8_t currentBeat = (millis() % totalDur) / beatDur;
+        const uint8_t currentBeat = getCurrentBeat(millis(), 6, 130);
 
         if(currentBeat % 2 == 0) {
           tone(TONE_PIN, random(2000, 2500), 100);
