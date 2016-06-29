@@ -35,10 +35,10 @@ const int sizeOfArray = N;
 #define RESTING 0
 #define FOOD 1
 #define GRAB 2
-#define NUM_STATES 3
+#define NUM_GESTURES 3
 
-Button buttons[NUM_STATES] = { Button(10), Button(11), Button(12) };
-// Button restingButton(10);
+Button buttons[NUM_GESTURES] = { Button(10), Button(11), Button(12) };
+float gesturePoints[NUM_GESTURES][2] = {{0.0, 0.0}, {0.0, 0.0}};
 
 void setup()
 {
@@ -60,16 +60,18 @@ void setup()
 }
 
 void updateButtons() {
-  for(unsigned int i = 0; i < NUM_STATES; i++) {
+  for(unsigned int i = 0; i < NUM_GESTURES; i++) {
     buttons[i].update();
   }
 }
 
 void loop()
 {
+  float maxResult = 0;
+  unsigned int maxIdx = 0;
   for(unsigned int d = 0; d < N; d++)
   {
-    int v = analogRead(0);        //-Read response signal
+    const int v = analogRead(0);  //-Read response signal
     CLR(TCCR1B, 0);               //-Stop generator
     TCNT1 = 0;                    //-Reload new frequency
     ICR1 = d;                     // |
@@ -80,6 +82,10 @@ void loop()
 
     freq[d] = d;
 
+    if(results[d] > maxResult) {
+      maxResult = results[d];
+      maxIdx = d;
+    }
     // plot(v, 0);              //-Display
     // plot(results[d], 1);
     // delayMicroseconds(1);
@@ -88,9 +94,11 @@ void loop()
   }
 
   updateButtons();
-  Serial.println("button states:");
-  for(unsigned int i = 0; i < NUM_STATES; i++) {
-    Serial.println(buttons[i].getState());
+  for(unsigned int i = 0; i < NUM_GESTURES; i++) {
+    if(buttons[i].getState() == HIGH){
+      gesturePoints[i][0] = freq[maxIdx];
+      gesturePoints[i][1] = results[maxIdx];
+    }
   }
 
   // PlottArray(1, freq, results);
