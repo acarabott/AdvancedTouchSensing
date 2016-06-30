@@ -34,9 +34,17 @@ void grabResponse(uint32_t startTime) {
 
 void gestureResponse(uint8_t gesture, uint32_t gestureStartTime) {
   switch (gesture) {
-    case 0:   noTone(TONE_PIN);                 break;
-    case 1:   touchResponse(gestureStartTime);  break;
-    case 2:   grabResponse(gestureStartTime);   break;
-    default:  noTone(TONE_PIN);                 break;
+    case 0:
+      noTone(TONE_PIN);
+    break;
+    case 1:
+      touchResponse(gestureStartTime);
+    break;
+    case 2:
+      grabResponse(gestureStartTime);
+    break;
+    default:
+      noTone(TONE_PIN);
+    break;
   }
 }
