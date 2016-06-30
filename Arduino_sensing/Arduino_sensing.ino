@@ -30,13 +30,17 @@ const float maxDist = 204800;       // N * 1024 (analogue range)
 
 float results[N];                   //-Filtered result buffer
 
-#define NUM_GESTURES 3
-Button buttons[NUM_GESTURES] = { Button(10), Button(11), Button(12) };
-float gesturePoints[NUM_GESTURES][2] = {{0.0, 0.0}, {0.0, 0.0}};
+// #define SEND 1           // Uncomment this line to enable sending via serial
+#define NUM_GESTURES 3   // Comment line to disable on board gesture recognition
 
-uint8_t previousGesture = 0;
-uint8_t currentGesture = 0;
-uint32_t gestureStartTime = 0;
+#ifdef NUM_GESTURES
+  Button buttons[NUM_GESTURES] = { Button(10), Button(11), Button(12) };
+  float gesturePoints[NUM_GESTURES][2] = {{0.0, 0.0}, {0.0, 0.0}};
+
+  uint8_t previousGesture = 0;
+  uint8_t currentGesture = 0;
+  uint32_t gestureStartTime = 0;
+#endif
 
 void setup()
 {
@@ -52,8 +56,13 @@ void setup()
     results[i] = 0;               //-+
   }
 
-  gestureSetup();                 // Setup gesture responder
+#ifdef SEND
   Serial.begin(115200);
+#endif
+
+#ifdef NUM_GESTURES
+  gestureSetup();                 // Setup gesture responder
+#endif
 }
 
 float getDistance(float x1, float y1, float x2, float y2) {
@@ -62,9 +71,12 @@ float getDistance(float x1, float y1, float x2, float y2) {
 
 void loop()
 {
-  // read data
+#ifdef NUM_GESTURES
   uint16_t maxFreq = 0;
   float maxResult = 0;
+#endif
+
+  // read data
   for(uint16_t i = 0; i < N; i++)
   {
     const uint16_t v = analogRead(0);  //-Read response signal
@@ -76,15 +88,20 @@ void loop()
 
     results[i] = results[i] * 0.5 + (float)(v) * 0.5;   //Filter results
 
+  #ifdef NUM_GESTURES
     if(results[i] > maxResult) {
       maxFreq = i;
       maxResult = results[i];
     }
+  #endif
   }
 
-  // Plotting
+  // Sending
+#ifdef SEND
   PlottArray(1, results, N);
+#endif
 
+#ifdef NUM_GESTURES
   // gesture recognition
   float closestGestureDistance = maxDist;
   for(uint8_t i = 0; i < NUM_GESTURES; i++) {
@@ -112,6 +129,7 @@ void loop()
   // response
   gestureResponse(currentGesture, gestureStartTime);
   previousGesture = currentGesture;
+#endif
 
   TOG(PORTB, 0);            //-Toggle pin 8 after each sweep (good for scope)
 }
