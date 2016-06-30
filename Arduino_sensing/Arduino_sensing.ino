@@ -26,7 +26,7 @@
 #define TOG(x,y) (x^=(1<<y))                //-+
 
 #define N 200                       //How many frequencies
-const float maxDist = 163840;       // 160 * 1024
+const float maxDist = 204800;       // N * 1024 (analogue range)
 
 float results[N];                   //-Filtered result buffer
 
