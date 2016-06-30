@@ -77,7 +77,8 @@ void loop()
     float maxResult = 0;
   #endif
 
-  // read data
+  // Reading data
+  // -----------------------
   for(uint16_t i = 0; i < N; i++)
   {
     const uint16_t v = analogRead(0);  //-Read response signal
