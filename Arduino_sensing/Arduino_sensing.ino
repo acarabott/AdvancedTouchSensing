@@ -1,10 +1,11 @@
 #include "Button.h"
 
-
-//****************************************************************************************
-// Illutron take on Disney style capacitive touch sensor using only passives and Arduino
+//******************************************************************************
+// Illutron take on Disney style capacitive touch sensor using only passives
+// and Arduino
 // Dzl 2012
-//****************************************************************************************
+// Gesture recognition ported from Processing code by Arthur Carabott
+//******************************************************************************
 
 
 //                              10n
@@ -56,13 +57,13 @@ void setup()
     results[i] = 0;               //-+
   }
 
-#ifdef SEND
-  Serial.begin(115200);
-#endif
+  #ifdef SEND
+    Serial.begin(115200);
+  #endif
 
-#ifdef NUM_GESTURES
-  gestureSetup();                 // Setup gesture responder
-#endif
+  #ifdef NUM_GESTURES
+    gestureSetup();                 // Setup gesture responder
+  #endif
 }
 
 float getDistance(float x1, float y1, float x2, float y2) {
@@ -71,10 +72,10 @@ float getDistance(float x1, float y1, float x2, float y2) {
 
 void loop()
 {
-#ifdef NUM_GESTURES
-  uint16_t maxFreq = 0;
-  float maxResult = 0;
-#endif
+  #ifdef NUM_GESTURES
+    uint16_t maxFreq = 0;
+    float maxResult = 0;
+  #endif
 
   // read data
   for(uint16_t i = 0; i < N; i++)
@@ -88,48 +89,52 @@ void loop()
 
     results[i] = results[i] * 0.5 + (float)(v) * 0.5;   //Filter results
 
-  #ifdef NUM_GESTURES
-    if(results[i] > maxResult) {
-      maxFreq = i;
-      maxResult = results[i];
-    }
-  #endif
+    #ifdef NUM_GESTURES
+      if(results[i] > maxResult) {
+        maxFreq = i;
+        maxResult = results[i];
+      }
+    #endif
   }
-
-  // Sending
-#ifdef SEND
-  PlottArray(1, results, N);
-#endif
-
-#ifdef NUM_GESTURES
-  // gesture recognition
-  float closestGestureDistance = maxDist;
-  for(uint8_t i = 0; i < NUM_GESTURES; i++) {
-    // update gesture
-    buttons[i].update();
-    if(buttons[i].getState() == HIGH) {
-      gesturePoints[i][0] = maxFreq;
-      gesturePoints[i][1] = maxResult;
-    }
-
-    // calculate closest gesture
-    const float dist = getDistance(maxFreq, maxResult,
-                                   gesturePoints[i][0], gesturePoints[i][1]);
-
-    if(dist < closestGestureDistance){
-      closestGestureDistance = dist;
-      currentGesture = i;
-    }
-  }
-
-  if(currentGesture != previousGesture){
-    gestureStartTime = millis();
-  }
-
-  // response
-  gestureResponse(currentGesture, gestureStartTime);
-  previousGesture = currentGesture;
-#endif
-
   TOG(PORTB, 0);            //-Toggle pin 8 after each sweep (good for scope)
+
+
+
+  // Sending data via serial
+  // -----------------------
+
+  #ifdef SEND
+    PlottArray(1, results, N);
+  #endif
+
+  // On board gesture recognition
+  // ----------------------------
+  #ifdef NUM_GESTURES
+    float closestGestureDistance = maxDist;
+    for(uint8_t i = 0; i < NUM_GESTURES; i++) {
+      // update gesture
+      buttons[i].update();
+      if(buttons[i].getState() == HIGH) {
+        gesturePoints[i][0] = maxFreq;
+        gesturePoints[i][1] = maxResult;
+      }
+
+      // calculate closest gesture
+      const float dist = getDistance(maxFreq, maxResult,
+                                     gesturePoints[i][0], gesturePoints[i][1]);
+
+      if(dist < closestGestureDistance){
+        closestGestureDistance = dist;
+        currentGesture = i;
+      }
+    }
+
+    if(currentGesture != previousGesture){
+      gestureStartTime = millis();
+    }
+
+    // response
+    gestureResponse(currentGesture, gestureStartTime);
+    previousGesture = currentGesture;
+  #endif
 }
