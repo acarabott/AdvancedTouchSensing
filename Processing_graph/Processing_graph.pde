@@ -33,84 +33,86 @@ void draw() {
   /* ====================================================================
    Print the graph
    ====================================================================  */
+  if( !DataRecieved3 ){
+    textSize(30);
+    fill(0);
+    text("No data received", 50, 50);
+    return;
+  }
 
-  if ( DataRecieved3 ) {
-    pushMatrix();
-    pushStyle();
-    MyArduinoGraph.yMax=1000;      
-    MyArduinoGraph.yMin=-200;      
-    MyArduinoGraph.xMax=int (max(Time3));
-    MyArduinoGraph.DrawAxis();    
-    MyArduinoGraph.smoothLine(Time3, Voltage3);
-    popStyle();
-    popMatrix();
+  pushMatrix();
+  pushStyle();
+  MyArduinoGraph.yMax=1000;
+  MyArduinoGraph.yMin=-200;
+  MyArduinoGraph.xMax=int (max(Time3));
+  MyArduinoGraph.DrawAxis();
+  MyArduinoGraph.smoothLine(Time3, Voltage3);
+  popStyle();
+  popMatrix();
 
-    float gestureOneDiff =0;
-    float gestureTwoDiff =0;
-    float gestureThreeDiff =0;
+  float gestureOneDiff =0;
+  float gestureTwoDiff =0;
+  float gestureThreeDiff =0;
 
-    /* ====================================================================
-     Gesture compare
-     ====================================================================  */
-    float totalDist = 0;
-    int currentMax = 0;
-    float currentMaxValue = -1;
-    for (int i = 0; i < 4;i++)
+  /* ====================================================================
+   Gesture compare
+   ====================================================================  */
+  float totalDist = 0;
+  int currentMax = 0;
+  float currentMaxValue = -1;
+  for (int i = 0; i < 4;i++)
 
+  {
+
+    //  gesturePoints[i][0] =
+    if (mousePressed && mouseX > 750 && mouseX<800 && mouseY > 100*(i+1) && mouseY < 100*(i+1) + 50)
     {
-
-      //  gesturePoints[i][0] = 
-      if (mousePressed && mouseX > 750 && mouseX<800 && mouseY > 100*(i+1) && mouseY < 100*(i+1) + 50)
-      {
-        fill(255, 0, 0);
-
-        gesturePoints[i][0] = Time3[MyArduinoGraph.maxI];
-        gesturePoints[i][1] = Voltage3[MyArduinoGraph.maxI];
-      }
-      else
-      {
-        fill(255, 255, 255);
-      }
-
-   //calucalte individual dist
-      gestureDist[i] = dist(Time3[MyArduinoGraph.maxI], Voltage3[MyArduinoGraph.maxI], gesturePoints[i][0], gesturePoints[i][1]);
-      totalDist = totalDist + gestureDist[i];
-      if(gestureDist[i] < currentMaxValue || i == 0)
-      {
-         currentMax = i;
-        currentMaxValue =  gestureDist[i];
-      }
-    }
-    totalDist=totalDist /3;
-
-    for (int i = 0; i < 4;i++)
-    {
-      float currentAmmount = 0;
-      currentAmmount = 1-gestureDist[i]/totalDist;
-      if(currentMax == i)
-       {
-         fill(0,0,0);
-    //       text(names[i],50,450);
-       fill(currentAmmount*255.0f, 0, 0);
-     
-
-       }
-       else
-       {
-         fill(255,255,255);
-       }
-
-      stroke(0, 0, 0);
-      rect(750, 100 * (i+1), 50, 50);
-      fill(0,0,0);
-      textSize(30);
-      text(names[i],810,100 * (i+1)+25);
-
       fill(255, 0, 0);
-   //   rect(800,100* (i+1), max(0,currentAmmount*50),50);
+
+      gesturePoints[i][0] = Time3[MyArduinoGraph.maxI];
+      gesturePoints[i][1] = Voltage3[MyArduinoGraph.maxI];
+    }
+    else
+    {
+      fill(255, 255, 255);
     }
 
+ //calucalte individual dist
+    gestureDist[i] = dist(Time3[MyArduinoGraph.maxI], Voltage3[MyArduinoGraph.maxI], gesturePoints[i][0], gesturePoints[i][1]);
+    totalDist = totalDist + gestureDist[i];
+    if(gestureDist[i] < currentMaxValue || i == 0)
+    {
+       currentMax = i;
+      currentMaxValue =  gestureDist[i];
+    }
+  }
+  totalDist=totalDist /3;
 
+  for (int i = 0; i < 4;i++)
+  {
+    float currentAmmount = 0;
+    currentAmmount = 1-gestureDist[i]/totalDist;
+    if(currentMax == i)
+     {
+       fill(0,0,0);
+  //       text(names[i],50,450);
+     fill(currentAmmount*255.0f, 0, 0);
+
+
+     }
+     else
+     {
+       fill(255,255,255);
+     }
+
+    stroke(0, 0, 0);
+    rect(750, 100 * (i+1), 50, 50);
+    fill(0,0,0);
+    textSize(30);
+    text(names[i],810,100 * (i+1)+25);
+
+    fill(255, 0, 0);
+ //   rect(800,100* (i+1), max(0,currentAmmount*50),50);
   }
 }
 
