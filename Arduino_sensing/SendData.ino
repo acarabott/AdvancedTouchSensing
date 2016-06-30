@@ -50,7 +50,7 @@ void SendData(int Command, uint16_t xValue, uint16_t yValue){
 
 void PlottArray(uint8_t cmd, float Array1[], uint16_t numValues) {
   SendData(cmd + 1, 1, 1);            // Tell PC an array is about to be sent
-  delay(1);
+  // delay(1);
 
   for(uint16_t x = 0; x < numValues; x++) {     // Send the arrays
     SendData(cmd, x, round(Array1[x]));
