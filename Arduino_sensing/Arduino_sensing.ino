@@ -30,16 +30,12 @@ const float maxDist = 204800;       // N * 1024 (analogue range)
 
 float results[N];                   //-Filtered result buffer
 
-#define RESTING 0
-#define FOOD 1
-#define GRAB 2
 #define NUM_GESTURES 3
-
 Button buttons[NUM_GESTURES] = { Button(10), Button(11), Button(12) };
 float gesturePoints[NUM_GESTURES][2] = {{0.0, 0.0}, {0.0, 0.0}};
 
-uint8_t previousGesture = RESTING;
-uint8_t currentGesture = RESTING;
+uint8_t previousGesture = 0;
+uint8_t currentGesture = 0;
 uint32_t gestureStartTime = 0;
 
 #define TONE_PIN 7
@@ -144,10 +140,10 @@ void loop()
 
   // response
   switch (currentGesture) {
-    case RESTING: noTone(TONE_PIN);   break;
-    case FOOD:    foodResponse(gestureStartTime);     break;
-    case GRAB:    grabResponse(gestureStartTime);     break;
-    default:      noTone(TONE_PIN);   break;
+    case 0:   noTone(TONE_PIN);               break;
+    case 1:   foodResponse(gestureStartTime); break;
+    case 2:   grabResponse(gestureStartTime); break;
+    default:  noTone(TONE_PIN);               break;
   }
 
   previousGesture = currentGesture;
