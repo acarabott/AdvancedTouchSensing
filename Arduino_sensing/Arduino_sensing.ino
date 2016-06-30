@@ -54,7 +54,7 @@ void setup()
   pinMode(9, OUTPUT);             //-Signal generator pin
   pinMode(8, OUTPUT);             //-Sync (test) pin
 
-  // Serial.begin(115200);
+  Serial.begin(115200);
 
   for(int i = 0; i < N; i++) {    //-Preset results
     results[i] = 0;               //-+
@@ -114,6 +114,9 @@ void loop()
       maxResult = results[i];
     }
   }
+
+  // Plotting
+  PlottArray(1, results, N);
 
   // gesture recognition
   float closestGestureDistance = maxDist;
