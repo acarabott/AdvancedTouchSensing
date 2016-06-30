@@ -1,6 +1,6 @@
-byte yMSB=0, yLSB=0, xMSB=0, xLSB=0, zeroByte=128, Checksum=0;
+uint8_t yMSB=0, yLSB=0, xMSB=0, xLSB=0, zeroByte=128, Checksum=0;
 
-void SendData(int Command, unsigned int xValue, unsigned int yValue){
+void SendData(int Command, uint16_t xValue, uint16_t yValue){
   /* >=================================================================<
      y = 01010100 11010100    (x & y are 2 Byte integers)
      yMSB      yLSB      send seperately -> reciever joins them
