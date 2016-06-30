@@ -2,25 +2,25 @@ import processing.serial.*;
 int SerialPortNumber=2;
 int PortSelected=2;
 
-/*   =================================================================================       
+/*   =================================================================================
  Global variables
  =================================================================================*/
 
-int xValue, yValue, Command; 
+int xValue, yValue, Command;
 boolean Error=true;
 
 boolean UpdateGraph=true;
-int lineGraph; 
+int lineGraph;
 int ErrorCounter=0;
-int TotalRecieved=0; 
+int TotalRecieved=0;
 
-/*   =================================================================================       
+/*   =================================================================================
  Local variables
  =================================================================================*/
 boolean DataRecieved1=false, DataRecieved2=false, DataRecieved3=false;
 
 float[] DynamicArrayTime1, DynamicArrayTime2, DynamicArrayTime3;
-float[] Time1, Time2, Time3; 
+float[] Time1, Time2, Time3;
 float[] Voltage1, Voltage2, Voltage3;
 float[] current;
 float[] DynamicArray1, DynamicArray2, DynamicArray3;
@@ -29,8 +29,8 @@ float[] PowerArray= new float[0];            // Dynamic arrays that will use the
 float[] DynamicArrayPower = new float[0];    // function to add values
 float[] DynamicArrayTime= new float[0];
 
-String portName; 
-String[] ArrayOfPorts=new String[SerialPortNumber]; 
+String portName;
+String[] ArrayOfPorts=new String[SerialPortNumber];
 
 boolean DataRecieved=false, Data1Recieved=false, Data2Recieved=false;
 int incrament=0;
@@ -43,9 +43,9 @@ int xMSB, xLSB, yMSB, yLSB;		                // Bytes of data
 Serial myPort;                                        // The serial port object
 
 
-/*   =================================================================================       
+/*   =================================================================================
  A once off serail port setup function. In this case the selection of the speed,
- the serial port and clearing the serial port buffer  
+ the serial port and clearing the serial port buffer
  =================================================================================*/
 
 void SerialPortSetup() {
@@ -58,29 +58,29 @@ void SerialPortSetup() {
   println(ArrayOfPorts);
   myPort = new Serial(this, portName, 115200);
   delay(50);
-  myPort.clear(); 
+  myPort.clear();
   myPort.buffer(20);
 }
 
-/* ============================================================    
- serialEvent will be called when something is sent to the 
- serial port being used. 
+/* ============================================================
+ serialEvent will be called when something is sent to the
+ serial port being used.
  ============================================================   */
 
 void serialEvent(Serial myPort) {
 
-  while (myPort.available ()>0)
-  {
-    /* ============================================================    
-     Read the next byte that's waiting in the buffer. 
+  while (myPort.available ()>0) //<>//
+  { //<>//
+    /* ============================================================
+     Read the next byte that's waiting in the buffer.
      ============================================================   */
 
-    int inByte = myPort.read();
+    int inByte = myPort.read(); //<>//
 
-    if (inByte==0)serialCount=0;
+    if (inByte==0)serialCount=0; //<>//
 
     if (inByte>255) {
-      println(" inByte = "+inByte);    
+      println(" inByte = "+inByte);
       exit();
     }
 
@@ -127,7 +127,7 @@ void serialEvent(Serial myPort) {
 
       xLSB = serialInArray[3];
       if ( (zeroByte & 1) == 1) xLSB=0;
-      xMSB = serialInArray[2];      
+      xMSB = serialInArray[2];
       if ( (zeroByte & 2) == 2) xMSB=0;
 
       yLSB = serialInArray[5];
@@ -137,24 +137,24 @@ void serialEvent(Serial myPort) {
       if ( (zeroByte & 8) == 8) yMSB=0;
 
 
-      //   println( "0\tCommand\tyMSB\tyLSB\txMSB\txLSB\tzeroByte\tsChecksum"); 
-      //  println(serialInArray[0]+"\t"+Command +"\t"+ yMSB +"\t"+ yLSB +"\t"+ xMSB +"\t"+ xLSB+"\t" +zeroByte+"\t"+ serialInArray[7]); 
+      //   println( "0\tCommand\tyMSB\tyLSB\txMSB\txLSB\tzeroByte\tsChecksum");
+      //  println(serialInArray[0]+"\t"+Command +"\t"+ yMSB +"\t"+ yLSB +"\t"+ xMSB +"\t"+ xLSB+"\t" +zeroByte+"\t"+ serialInArray[7]);
 
       // >=====< combine bytes to form large integers >==================< //
 
       Command  = serialInArray[1];
 
-      xValue   = xMSB << 8 | xLSB;                    // Get xValue from yMSB & yLSB  
-      yValue   = yMSB << 8 | yLSB;                    // Get yValue from xMSB & xLSB
+      xValue   = xMSB << 8 | xLSB;     // Get xValue from yMSB & yLSB
+      yValue   = yMSB << 8 | yLSB;     // Get yValue from xMSB & xLSB
 
         // println(Command+ "  "+xValue+"  "+ yValue+" " );
 
       /*
-How that works: if xMSB = 10001001   and xLSB = 0100 0011 
-       xMSB << 8 = 10001001 00000000    (shift xMSB left by 8 bits)                       
-       xLSB =          01000011    
+        How that works: if xMSB = 10001001   and xLSB = 0100 0011
+       xMSB << 8 = 10001001 00000000    (shift xMSB left by 8 bits)
+       xLSB =          01000011
        xLSB | xMSB = 10001001 01000011    combine the 2 bytes using the logic or |
-       xValue = 10001001 01000011     now xValue is a 2 byte number 0 -> 65536  
+       xValue = 10001001 01000011     now xValue is a 2 byte number 0 -> 65536
        */
 
 
@@ -171,7 +171,7 @@ How that works: if xMSB = 10001001   and xLSB = 0100 0011
 
 
         /*  ==================================================================
-         Recieve array1 and array2 from chip, update oscilloscope      
+         Recieve array1 and array2 from chip, update oscilloscope
          ==================================================================  */
 
       case 1: // Data is added to dynamic arrays
@@ -181,16 +181,16 @@ How that works: if xMSB = 10001001   and xLSB = 0100 0011
         break;
 
       case 2: // An array of unknown size is about to be recieved, empty storage arrays
-        DynamicArrayTime3= new float[0]; 
-        DynamicArray3= new float[0]; 
-        break;    
+        DynamicArrayTime3= new float[0];
+        DynamicArray3= new float[0];
+        break;
 
-      case 3:  // Array has finnished being recieved, update arrays being drawn 
+      case 3:  // Array has finnished being recieved, update arrays being drawn
         Time3=DynamicArrayTime3;
         Voltage3=DynamicArray3;
      //   println(Voltage3.length);
         DataRecieved3=true;
-        break;  
+        break;
 
         /*  ==================================================================
          Recieve array2 and array3 from chip
@@ -203,27 +203,27 @@ How that works: if xMSB = 10001001   and xLSB = 0100 0011
         break;
 
       case 5: // An array of unknown size is about to be recieved, empty storage arrays
-        DynamicArrayTime2= new float[0]; 
-        DynamicArray2= new float[0]; 
-        break;    
+        DynamicArrayTime2= new float[0];
+        DynamicArray2= new float[0];
+        break;
 
-      case 6:  // Array has finnished being recieved, update arrays being drawn 
+      case 6:  // Array has finnished being recieved, update arrays being drawn
         Time2=DynamicArrayTime2;
         current=DynamicArray2;
         DataRecieved2=true;
-        break;  
+        break;
 
         /*  ==================================================================
-         Recieve a value of calculated power consumption & add it to the 
+         Recieve a value of calculated power consumption & add it to the
          PowerArray.
          ==================================================================  */
-      case 20:  
+      case 20:
         PowerArray=append( PowerArray, yValue );
 
-        break; 
+        break;
 
-      case 21:  
-        DynamicArrayTime=append( DynamicArrayTime, xValue ); 
+      case 21:
+        DynamicArrayTime=append( DynamicArrayTime, xValue );
         DynamicArrayPower=append( DynamicArrayPower, yValue );
 
 
@@ -232,8 +232,5 @@ How that works: if xMSB = 10001001   and xLSB = 0100 0011
       }
     }
   }
-  redraw();  
-  //    }
+  redraw();
 }
-
-
