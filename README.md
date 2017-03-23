@@ -11,17 +11,31 @@ This implementation improves on the original by reading more frequencies, which 
 Hardware setup based on project by [Studio NAND](https://github.com/StudioNAND/tact-hardware).
 With additional buttons connected to pins 10, 11 and 12 for on-board gesture recognition ([Arduino Button tutorial](https://www.arduino.cc/en/Tutorial/Button)).
 
+- 1× 1N4148 diode
+- 1× 10mH coil
+
+### Capacitors
+
+- 1× 100pF
+- 1× 10nF
+
+### Resistors
+
+- 1× 3,3k
+- 1× 10k
+- 1× 1M
+
 ![Hardware setup](images/board.png)
 
 ## Modes
 
 The hardware can optionally do on board gesture recognition, or send all the values via Serial to Processing (or other software).
 
-On board gesture recognition is *enabled* by default, it can be disabled by commenting out the line 
+On board gesture recognition is *enabled* by default, it can be disabled by commenting out the line
 
     #define NUM_GESTURES 3
 
-Serial sending is *disabled* by default, it can enabled by uncommenting the line 
+Serial sending is *disabled* by default, it can enabled by uncommenting the line
 
     // #define SEND 1
 
